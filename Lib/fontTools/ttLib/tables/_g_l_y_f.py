@@ -142,7 +142,7 @@ class table__g_l_y_f(DefaultTable.DefaultTable):
 			glyph = self[glyphName]
 			if glyph.numberOfContours:
 				if splitGlyphs:
-					glyphPath = userNameToFileName(unicode(glyphName, 'utf-8'), existingGlyphFiles, prefix=("%s%s"%(path, "_")), suffix=ext)
+					glyphPath = userNameToFileName(tounicode(glyphName, 'utf-8'), existingGlyphFiles, prefix=("%s%s"%(path, "_")), suffix=ext)
 					existingGlyphFiles.add(glyphPath.lower())
 					glyphWriter = xmlWriter.XMLWriter(
 						glyphPath, idlefunc=writer.idlefunc,
