@@ -1164,6 +1164,13 @@ class CVParametersNameStatement(NameRecord):
         self.nameID = '{}.{}{}'.format(self.nameID, self.block_name, item)
         NameRecord.build(self, builder)
 
+    def asFea(self, indent=""):
+        plat = simplify_name_attributes(self.platformID, self.platEncID,
+                                        self.langID)
+        if plat != "":
+            plat += " "
+        return "name {}\"{}\";".format(plat, self.string)
+
 
 class CharacterStatement(Statement):
     """
@@ -1179,6 +1186,9 @@ class CharacterStatement(Statement):
 
     def build(self, builder):
         builder.add_cv_character(self.character, self.tag)
+
+    def asFea(self, indent=""):
+        return "Character {:#x};".format(self.character)
 
 
 class BaseAxis(Statement):
