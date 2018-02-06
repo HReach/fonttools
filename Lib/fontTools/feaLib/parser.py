@@ -1169,9 +1169,14 @@ class Parser(object):
         location = self.cur_token_location_
         tag = self.expect_tag_()
         vertical = (tag in {"vkrn", "vpal", "vhal", "valt"})
+
         stylisticset = None
         if tag in ["ss%02d" % i for i in range(1, 20+1)]:
             stylisticset = tag
+
+        cv_feature = None
+        if tag in ["cv%02d" % i for i in range(1, 99+1)]:
+            cv_feature = tag
 
         size_feature = (tag == "size")
 
@@ -1181,7 +1186,8 @@ class Parser(object):
             use_extension = True
 
         block = self.ast.FeatureBlock(location, tag, use_extension)
-        self.parse_block_(block, vertical, stylisticset, size_feature)
+        self.parse_block_(block, vertical, stylisticset, size_feature,
+            cv_feature)
         return block
 
     def parse_feature_reference_(self):
@@ -1228,7 +1234,7 @@ class Parser(object):
         return self.ast.FontRevisionStatement(location, version)
 
     def parse_block_(self, block, vertical, stylisticset=None,
-                     size_feature=False):
+                     size_feature=False, cv_feature=None):
         self.expect_symbol_("{")
         for symtab in self.symbol_tables_:
             symtab.enter_scope()
@@ -1270,6 +1276,8 @@ class Parser(object):
                 statements.append(self.parse_valuerecord_definition_(vertical))
             elif stylisticset and self.is_cur_keyword_("featureNames"):
                 statements.append(self.parse_featureNames_(stylisticset))
+            elif cv_feature and self.is_cur_keyword_("cvParameters"):
+                statements.append(self.parse_cvParameters_(cv_feature))
             elif size_feature and self.is_cur_keyword_("parameters"):
                 statements.append(self.parse_size_parameters_())
             elif size_feature and self.is_cur_keyword_("sizemenuname"):
